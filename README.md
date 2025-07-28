@@ -41,26 +41,47 @@ System architecture is a blueprint that defines the structure, interaction, and 
 
 **Code Management**: Centralized Git repository with GitFlow branching strategy.
 
-**Environments**: Independent setups for Development, Staging, and Production.
+**Environments**: Independent setups for Development, Staging, and Production with GitHub branching strategy.
 
-**Core Services**:
-- **Authentication Service**: Handles user authentication and session management
-- **IAM Service**: Manages Identity and Access Management
-- **Multi-Organization Service**: Supports multi-tenancy and organizational units
-- **Storage Service**: Manages data storage operations
-- **Email/SMS Service**: Handles communication via email and SMS
-- **Notification Service**: Manages various types of notifications
-- **Business Web Service**: REST APIs for real-time business operations
-- **Business Host Service**: Handles background tasks, batch processing, and scheduled workflows
+**Infrastructure Components**:
+- **Azure Kubernetes Services (AKS)**: Container orchestration platform with nodes and pods
+- **Azure Container Registry**: Secure container image storage and management
+- **Azure Web Application Firewall (WAF)**: Advanced threat protection
+- **Application Gateway**: Load balancing and traffic management
+- **Virtual Networks (VNET)**: Network segmentation and security
 
 **Data Stores**:
-- **MongoDB**: Primary NoSQL database for high scalability and unstructured data
-- **Redis**: High-speed in-memory caching
-- **Object Store**: Unstructured data storage for files and documents
+- **MongoDB Cluster**: Primary NoSQL database with encrypted data storage
+- **Redis**: High-speed volatile in-memory caching
+- **Azure Blob Storage**: Encrypted storage for data and media content with public/private buckets
+- **Container Hard Drives**: Encrypted persistent storage
 
-**Event Bus**: Message queue system for background workflows, task queues, and event-driven communication.
+**Messaging & Communication**:
+- **RabbitMQ**: Asynchronous messaging and event-driven communication
+- **Service Bus VNET**: Secure messaging infrastructure
 
-**Containerization & Orchestration**: Containerized services deployed using cloud-native orchestration platform.
+**Security & Compliance**:
+- **Key Vaults**: Hardware-encrypted secrets management
+- **Network Security Groups (NSG)**: Network-level security controls
+- **VPN Access**: Secure internal user access with strong authentication
+- **Bastion Server**: Secure administrative access
+
+**Containerization & Orchestration**: Containerized services deployed using Azure Kubernetes Service (AKS) with secure container registry.
+
+### Azure Blob Storage Implementation
+
+**Storage Strategy**:
+- **Public Buckets**: Store publicly accessible content (e.g., website banners, static assets) with direct URL access
+- **Private Buckets**: Store confidential content requiring authentication and pre-signed URLs for access
+
+**Environment Separation**:
+- **Development**: `ecap-falcon/dev`
+- **Staging**: `ecap-falcon/stage` 
+- **Production**: `ecap-falcon/prod`
+
+**Use Cases**:
+- **Public Content**: Website images, banners, and static assets accessible via direct URLs
+- **Private Content**: Client-uploaded media requiring secure access through pre-signed URLs
 
 ### High-Level Architecture Diagram
 
@@ -68,24 +89,23 @@ System architecture is a blueprint that defines the structure, interaction, and 
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                              CLIENT LAYER                                   │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│  Mobile Apps │ Web Browser │ Real-time Communication │ Push Notifications │
+│  External Users │ Internal Users │ VPN Access │ TLS Secure Connection     │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                              SECURITY & ENTRY LAYER                        │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│  Application Firewall │ Application Gateway │ TLS Encryption │ Load Balancing │
+│  Azure WAF │ Public IP │ Application Gateway │ VNET Inbound Security      │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│                            CORE SERVICES LAYER                             │
+│                            MICROSERVICES LAYER                             │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│  Authentication │ IAM │ Multi-Organization │ Storage │ Email/SMS │          │
-│  Notification │ Business Web Service │ Business Host Service │              │
+│  Azure Kubernetes Services │ Nodes │ Pods │ Ingress │ TLS Communication   │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│                            DATA & MESSAGING LAYER                          │
+│                            SUPPORTING SERVICES LAYER                       │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│  MongoDB │ Redis Cache │ Object Store │ Event Bus │ Message Queue      │
+│  MongoDB Cluster │ RabbitMQ │ Redis │ Blob Storage │ Container Storage   │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                            INFRASTRUCTURE LAYER                            │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│  Container Orchestration │ Container Registry │ Monitoring │ Security      │
+│  Azure Container Registry │ Prometheus │ Grafana │ Wazuh │ Key Vaults      │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -104,35 +124,35 @@ Production Deployment → Monitoring & Maintenance
 ### 2.2 System Design & Flow
 
 **Client Layer**
-- Mobile apps and web browsers connect through a secured Application Gateway
-- Real-time communication for live updates
-- Push notifications for mobile and web clients
+- **External Users**: Access via TLS-secured connections through Public IP
+- **Internal Users**: Secure VPN access with strong authentication
+- **TLS Encryption**: End-to-end encryption for all communications
 
 **Security & Entry Layer**
-- **Application Firewall**: Initial security layer for all incoming requests
-- **Application Gateway**: Routes and manages API traffic with load balancing
-- **TLS Encryption**: Secure communication channels
+- **Azure Web Application Firewall (WAF)**: Advanced threat protection and security
+- **Public IP**: Secure external access point
+- **Application Gateway**: Load balancing and traffic management
+- **VNET Inbound Security**: Network-level security controls
 
-**Core Services Layer**
-- **Authentication Service**: User authentication and session management
-- **IAM Service**: Identity and Access Management
-- **Multi-Organization Service**: Multi-tenancy support
-- **Storage Service**: Data storage operations
-- **Email/SMS Service**: Communication services
-- **Notification Service**: Notification management
-- **Business Web Service**: Real-time business operations
-- **Business Host Service**: Background processing and scheduled tasks
+**Microservices Layer**
+- **Azure Kubernetes Services (AKS)**: Container orchestration with nodes and pods
+- **Ingress**: Traffic routing and management
+- **TLS Communication**: Secure inter-service communication
+- **Microservices**: Distributed application components
 
-**Data & Messaging Layer**
-- **MongoDB**: Primary NoSQL database for high scalability and unstructured data
-- **Redis**: High-speed in-memory caching
-- **Object Store**: Unstructured data storage
-- **Event Bus**: Asynchronous communication and event-driven interactions
+**Supporting Services Layer**
+- **MongoDB Cluster**: Primary database with encrypted data storage
+- **RabbitMQ**: Asynchronous messaging and event-driven communication
+- **Redis**: High-speed volatile in-memory caching
+- **Azure Blob Storage**: Encrypted storage for data and media content with public/private buckets
+- **Container Storage**: Encrypted persistent storage
 
 **Infrastructure & Security**
-- Container orchestration platform
-- Comprehensive monitoring and security (Wazuh)
-- TLS-secured communication for all components
+- **Azure Container Registry**: Secure container image management
+- **Prometheus & Grafana**: Comprehensive monitoring and visualization
+- **Wazuh**: Security monitoring and compliance
+- **Key Vaults**: Hardware-encrypted secrets management
+- **Network Security Groups (NSG)**: Network-level security controls
 
 ---
 
@@ -142,17 +162,17 @@ Production Deployment → Monitoring & Maintenance
 
 **Frontend**: Modern web applications and mobile apps.
 
-**Backend**: Microservices-based architecture.
+**Backend**: Microservices-based architecture with Azure Kubernetes Services.
 
-**Messaging**: Event-driven communication system.
+**Messaging**: RabbitMQ for event-driven communication.
 
 **Notification Layer**: Real-time messaging and push notifications.
 
-**Databases**: Primary database, caching layer, and analytics database.
+**Databases**: MongoDB Cluster with Redis caching.
 
-**Storage**: Cloud-based file storage with encryption.
+**Storage**: Azure Blob Storage with public/private buckets for data and media content storage.
 
-**Monitoring & Logging**: Comprehensive monitoring and centralized logging system.
+**Monitoring & Logging**: Prometheus, Grafana, and Wazuh for comprehensive monitoring.
 
 ---
 
@@ -187,7 +207,7 @@ Production Deployment → Monitoring & Maintenance
 
 **Direct API Calls**: For real-time, synchronous operations.
 
-**Event Bus**: For asynchronous tasks like report processing or background workflows.
+**RabbitMQ Event Bus**: For asynchronous tasks like report processing or background workflows.
 
 **Hybrid Approach**: Combines direct APIs and events for flexible, reliable communication.
 
@@ -198,17 +218,19 @@ Production Deployment → Monitoring & Maintenance
 ### 2.6 Security & Observability
 
 **Security Layers**:
-- **Application Firewall**: Initial security barrier for all incoming requests
+- **Azure Web Application Firewall (WAF)**: Advanced threat protection and security
 - **TLS Encryption**: End-to-end encryption for all communications
 - **Authentication**: Secure token-based authentication for stateless sessions
 - **Single Sign-On**: Integration with enterprise identity providers
 - **Access Control**: Role-Based Access Control (RBAC) at all levels
 
 **Monitoring & Compliance**:
+- **Prometheus & Grafana**: Comprehensive metrics collection and visualization
 - **Wazuh Security & Compliance**: Advanced security monitoring and threat detection
 - **Centralized Logging**: Comprehensive log aggregation and analysis
 - **Real-time Monitoring**: Continuous system health and performance tracking
 - **Automated Audits**: Regular security assessments and compliance checks
+- **GDPR Compliance**: Full compliance with General Data Protection Regulation requirements
 
 ---
 
@@ -229,13 +251,13 @@ Production Deployment → Monitoring & Maintenance
 ### Multi-Layer Security
 
 #### Network Security:
-Network policies control traffic flow between services, ensuring secure communication and preventing unauthorized access.
+Network Security Groups (NSG) control traffic flow between services, ensuring secure communication and preventing unauthorized access.
 
 #### Identity & Access Management:
 Enterprise identity management with role-based access control for developers, operators, and administrators.
 
 #### Secrets Management:
-Centralized secrets management for secure storage and access to sensitive information like database credentials and API keys.
+Azure Key Vaults provide centralized secrets management for secure storage and access to sensitive information.
 
 ### Data Security
 
@@ -269,7 +291,7 @@ Results are processed, and responses are sent back to the client (if needed).
 
 ### 3.2 Notification Workflow
 
-Notification Service listens to message queue for events like "Task Completed."
+Notification Service listens to RabbitMQ for events like "Task Completed."
 
 For active users, updates are pushed through real-time communication.
 
@@ -281,11 +303,11 @@ For offline/mobile users, push notifications are sent.
 
 ### 4.1 Key Features
 
-**Multi-Layer Security**: Application Firewall, TLS encryption, and Wazuh security monitoring.
+**Multi-Layer Security**: Azure WAF, TLS encryption, and Wazuh security monitoring.
 
-**Comprehensive Service Architecture**: Authentication, IAM, Multi-Organization, Storage, Communication, and Business Services.
+**Comprehensive Service Architecture**: Microservices with Azure Kubernetes Services.
 
-**Event-Driven Communication**: Asynchronous messaging through Event Bus for scalable workflows.
+**Event-Driven Communication**: Asynchronous messaging through RabbitMQ for scalable workflows.
 
 **Real-Time Capabilities**: Instant updates and notifications for users.
 
@@ -293,5 +315,5 @@ For offline/mobile users, push notifications are sent.
 
 **Automated CI/CD Pipeline**: GitHub Actions, SonarQube quality checks, and automated deployments.
 
-**Multi-Environment Support**: Development, Staging, and Production environments with independent configurations.
+**Multi-Environment Support**: Development, Staging, and Production environments with GitHub branching strategy.
 
