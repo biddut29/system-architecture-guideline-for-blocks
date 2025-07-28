@@ -1,108 +1,27 @@
-# System Architecture Guideline
-### Table of Contents
-1. [What is System Architecture?](#what-is-system-architecture)
-2. [Key Components of the Architecture](#key-components-of-the-architecture)
-3. [System Design & Flow](#system-design--flow)
-4. [Software Components](#software-components)
-5. [CI/CD Flow](#cicd-flow)
-6. [Communication Between Microservices](#communication-between-microservices)
-7. [Security & Observability](#security--observability)
-8. [Scalability & Performance](#scalability--performance)
-9. [Notification & Event Flow](#notification--event-flow)
-10. [Architecture Highlights](#architecture-highlights)
-11. [Implementation Roadmap](#implementation-roadmap)
+# System Architecture
+
+## **1. Overview**
+
+**Purpose**: Enterprise-grade cloud-native microservices platform with multi-tenant architecture, secure data management, and scalable infrastructure.
+
+
+
+**Key Features**:
+- Multi-tenant architecture with complete data isolation
+- Microservices-based architecture (L0-L3 layered services)
+- Event-driven communication via RabbitMQ Service Bus
+- Real-time notifications and messaging
+- Payment processing integration 
+- Monitoring and observability
+- Automated CI/CD pipelines with security gates
+
+**High-level Goals**: Scalability, security, maintainability, compliance, performance, and developer productivity.
 
 ---
 
-## What is System Architecture?
+## **2. Architecture Diagram**
 
-System architecture is a blueprint that defines the structure, interaction, and deployment of software components, databases, and infrastructure. It ensures the system is scalable, maintainable, secure, and resilient, enabling smooth operation across distributed environments.
-
-### Key Design Principles:
-
-**Modular Microservices Design**: Independent services for better maintainability and scaling.
-
-**Separation of Responsibilities**:
-- **Web Services (API Layer)**: Handle synchronous client requests
-- **Host Services (Worker Layer)**: Process background tasks, heavy reports, and schedulers
-- **Multi-Tenant Architecture**: Isolated tenant data with dedicated database routing
-
-**Event-Driven Architecture**: RabbitMQ ensures asynchronous communication between services.
-
-**Real-Time Notification Layer**: WebSockets and Firebase Cloud Messaging (FCM) for instant updates.
-
-**Observability**: Integrated monitoring and centralized logging across all services.
-
----
-
-## Key Components of the Architecture
-
-### 2.1 Overview of the System
-
-**Code Management**: Centralized Git repository with GitFlow branching strategy.
-
-**Environments**: Independent setups for Development, Staging, and Production with GitHub branching strategy.
-
-**Infrastructure Components**:
-- **Azure Kubernetes Services (AKS)**: Container orchestration platform with nodes and pods
-- **Azure Container Registry**: Secure container image storage and management
-- **Azure Web Application Firewall (WAF)**: Advanced threat protection
-- **Application Gateway**: Load balancing and traffic management
-- **Virtual Networks (VNET)**: Network segmentation and security
-
-**Data Stores**:
-- **MongoDB Cluster**: Primary NoSQL database with encrypted data storage and multi-tenant isolation
-- **Redis**: High-speed volatile in-memory caching
-- **Azure Blob Storage**: Encrypted storage for data and media content with public/private buckets
-- **Container Hard Drives**: Encrypted persistent storage
-
-**Messaging & Communication**:
-- **RabbitMQ**: Asynchronous messaging and event-driven communication
-- **Service Bus VNET**: Secure messaging infrastructure
-
-**Security & Compliance**:
-- **Key Vaults**: Hardware-encrypted secrets management
-- **Network Security Groups (NSG)**: Network-level security controls
-- **VPN Access**: Secure internal user access with strong authentication
-- **Bastion Server**: Secure administrative access
-
-**Containerization & Orchestration**: Containerized services deployed using Azure Kubernetes Service (AKS) with secure container registry.
-
-### Azure Blob Storage Implementation
-
-**Storage Strategy**:
-- **Public Buckets**: Store publicly accessible content (e.g., website banners, static assets) with direct URL access
-- **Private Buckets**: Store confidential content requiring authentication and pre-signed URLs for access
-
-**Environment Separation**:
-- **Development**: `ecap-falcon/dev`
-- **Staging**: `ecap-falcon/stage` 
-- **Production**: `ecap-falcon/prod`
-
-**Use Cases**:
-- **Public Content**: Website images, banners, and static assets accessible via direct URLs
-- **Private Content**: Client-uploaded media requiring secure access through pre-signed URLs
-
-### Multi-Tenant Architecture
-
-**Tenant Isolation Strategy**:
-- **Dedicated Database Routing**: Each tenant has isolated database access through Tenant Service
-- **Microservices Entry Point**: Centralized microservice handles tenant-specific requests
-- **Data Segregation**: Complete data isolation between tenants for security and compliance
-
-**Architecture Flow**:
-- **Tenant Requests**: Multiple tenants access shared microservices infrastructure
-- **Service Routing**: Microservices route requests to Tenant Service for database selection
-- **Database Isolation**: Tenant Service directs requests to tenant-specific MongoDB instances
-- **Data Security**: Complete isolation ensures no cross-tenant data access
-
-**Benefits**:
-- **Security**: Complete data isolation between tenants
-- **Scalability**: Independent scaling of tenant databases
-- **Compliance**: Meets regulatory requirements for data segregation
-- **Performance**: Optimized database access for each tenant
-
-### High-Level Architecture Diagram
+### **High-Level Architecture**
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
@@ -128,211 +47,250 @@ System architecture is a blueprint that defines the structure, interaction, and 
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### CI/CD Pipeline Flow
+### **Deployment Diagram**
+- **Cloud Platform**: Microsoft Azure (AKS, ACR)
+- **Network**: Azure Virtual Network with isolated subnets
+- **Storage**: Azure Blob Storage with environment separation
 
+---
+
+## **3. Components Description**
+
+### **Frontend Components**
+- **Name**: Web Applications and Mobile Apps
+- **Responsibilities**: User interface, client-side logic, updates
+- **Technology Stack**: Angular/React, SignalR for communication
+- **Interactions**: REST APIs, WebSocket connections, GraphQL queries
+
+### **Backend Microservices**
+- **Name**: SELISE Microservices (L0-L3 Architecture)
+- **Responsibilities**: Business logic, data processing, service orchestration
+- **Technology Stack**: .NET Core, SELISE Framework with RBAC, CQRS, MediatR
+- **Interactions**: Internal APIs, message queues, database operations
+
+**Microservices Architecture**: L0 (Core Framework), L1 (Generic Services), L2-L3 (Business & Enterprise Services)
+
+### **Database Layer**
+- **Name**: MongoDB Cluster
+- **Responsibilities**: Primary data storage with multi-tenant isolation
+- **Technology Stack**: MongoDB NoSQL database
+- **Interactions**: Direct access from microservices, GraphQL interface
+
+### **Caching Layer**
+- **Name**: Redis Cache
+- **Responsibilities**: High-speed in-memory caching, session management
+- **Technology Stack**: Redis
+- **Interactions**: Cache frequently accessed data, improve response times
+
+### **Message Queue**
+- **Name**: RabbitMQ Service Bus
+- **Responsibilities**: Asynchronous messaging, event-driven communication
+- **Technology Stack**: RabbitMQ
+- **Interactions**: Cross-service communication, background task processing
+
+### **Storage Service**
+- **Name**: Azure Blob Storage
+- **Responsibilities**: File storage, media content, backup data
+- **Technology Stack**: Azure Blob Storage
+- **Interactions**: File upload/download, pre-signed URL generation
+
+---
+
+## **4. Data Flow**
+
+### **Data Flow Diagram (DFD)**
+1. **Client Request**: External users access through Application Gateway
+2. **Authentication**: JWT token validation and RBAC authorization
+3. **Service Routing**: Ingress controller routes to appropriate microservice
+4. **Data Processing**: Microservice processes request and interacts with MongoDB
+5. **Caching**: Redis provides fast access to frequently used data
+6. **Asynchronous Processing**: RabbitMQ handles background tasks
+7. **Response**: Processed data returned to client through secure channels
+
+### **Data Sources**
+- **Primary Database**: MongoDB Cluster with multi-tenant isolation
+- **Cache**: Redis for high-performance data access
+- **File Storage**: Azure Blob Storage for documents and media
+- **External APIs**: Payment gateways, email services, third-party integrations
+
+### **Data Transformation**
+- **GraphQL Interface**: Centralized data access with role-based permissions
+- **Multi-tenant Routing**: Tenant Service directs requests to isolated database instances
+- **Event Processing**: RabbitMQ handles data transformation and workflow orchestration
+
+---
+
+## **5. Integration & Interfaces**
+
+### **External APIs/Services**
+- **Payment Gateways**: SIX, Stripe integration
+- **Email Services**: SMTP integration for notifications
+- **Campaign Management**: HubSpot integration
+- **Push Notifications**: Firebase Cloud Messaging (FCM)
+
+### **Internal APIs**
+- **REST APIs**: Standard HTTP endpoints for synchronous operations
+- **GraphQL**: Flexible data querying interface
+- **WebSocket**: Communication via SignalR
+- **Message Queues**: RabbitMQ for asynchronous communication
+
+### **Communication Patterns**
+- **Synchronous**: Direct REST API calls for operations
+- **Asynchronous**: RabbitMQ message queues for background processing
+- **Event-Driven**: Publish-subscribe pattern for decoupled services
+- **Real-time**: WebSocket connections for updates
+
+---
+
+## **6. Security**
+
+### **Authentication & Authorization**
+- **JWT Tokens**: Stateless authentication for API access
+- **RBAC**: Role-Based Access Control at service and data levels
+- **SSO**: Single Sign-On integration with OAuth2
+- **Multi-factor Authentication**: Enhanced security for administrative access
+
+### **Data Security**
+- **Encryption**: AES-256 encryption at rest and TLS 1.3 in transit
+- **Key Management**: Azure Key Vault for secure secret storage
+- **Network Security**: Azure WAF, Network Security Groups, VPN access
+- **Bastion Server**: Secure administrative access to infrastructure
+
+### **Compliance**
+- **FADP, GDPR**: Full compliance with General Data Protection Regulation
+- **Laws of the Land**: Compliance with local regulatory requirements
+- **Internal Standards**: General Data Protection Policy, Data Processing Agreement (DPA), Data Compliance Form
+- **Technical & Organisational Measures (TOM)**: Security and privacy controls
+- **Data Breach Policy**: Incident response and notification procedures
+- **IT Security Guideline**: Security best practices and standards
+- **Azure Compliance**: Cloud security certifications
+
+---
+
+## **7. Scalability & Performance**
+
+### **Load Handling**
+- **Horizontal Scaling**: Kubernetes auto-scaling based on load
+- **Multi-level Caching**: Redis for application and database caching
+- **Queue-based Processing**: RabbitMQ prevents bottlenecks
+- **Load Balancing**: Application Gateway and internal load balancers
+
+### **Caching Strategy**
+- **Application Cache**: Redis for frequently accessed data
+- **CDN Integration**: Content delivery network for static assets
+- **Database Query Optimization**: Indexed queries and connection pooling
+
+### **Monitoring & Logging**
+- **Metrics Collection**: Prometheus for data collection
+- **Visualization**: Grafana for dashboards
+- **Security Monitoring**: Wazuh for threat detection and compliance
+- **Centralized Logging**: ELK stack or Azure Monitor for log aggregation
+
+---
+
+## **8. DevOps & Deployment**
+
+### **CI/CD Pipeline**
 ```
 Code Development → Version Control (GitHub) → Automated Testing → 
 Container Build → Image Registry → Orchestration Platform → 
 Production Deployment → Monitoring & Maintenance
 ```
 
----
+### **Environments**
+- **Development (dev)**: Feature development and initial testing
+- **Staging (stg)**: Pre-production testing and validation
+- **Production (prod)**: Live production environment with PR-only access
+- **UAT**: User Acceptance Testing (project-specific)
 
-## System Design & Flow
+### **Containerization**
+- **Docker**: Containerized microservices
+- **Kubernetes**: Azure Kubernetes Service (AKS) for orchestration
+- **Helm Charts**: Package management for Kubernetes deployments
 
-### 2.2 System Design & Flow
-
-**Client Layer**
-- **External Users**: Access via TLS-secured connections through Public IP
-- **Internal Users**: Secure VPN access with strong authentication
-- **TLS Encryption**: End-to-end encryption for all communications
-
-**Security & Entry Layer**
-- **Azure Web Application Firewall (WAF)**: Advanced threat protection and security
-- **Public IP**: Secure external access point
-- **Application Gateway**: Load balancing and traffic management
-- **VNET Inbound Security**: Network-level security controls
-
-**Microservices Layer**
-- **Azure Kubernetes Services (AKS)**: Container orchestration with nodes and pods
-- **Ingress**: Traffic routing and management
-- **TLS Communication**: Secure inter-service communication
-- **Microservices**: Distributed application components
-
-**Supporting Services Layer**
-- **MongoDB Cluster**: Primary database with encrypted data storage and multi-tenant isolation
-- **RabbitMQ**: Asynchronous messaging and event-driven communication
-- **Redis**: High-speed volatile in-memory caching
-- **Azure Blob Storage**: Encrypted storage for data and media content with public/private buckets
-- **Container Storage**: Encrypted persistent storage
-
-**Infrastructure & Security**
-- **Azure Container Registry**: Secure container image management
-- **Prometheus & Grafana**: Comprehensive monitoring and visualization
-- **Wazuh**: Security monitoring and compliance
-- **Key Vaults**: Hardware-encrypted secrets management
-- **Network Security Groups (NSG)**: Network-level security controls
+### **Cloud Infrastructure**
+- **Azure Cloud**: AKS, ACR, Blob Storage, Key Vaults, WAF
+- **Virtual Network**: Isolated network with subnets for AKS and VMs
+- **Application Gateway**: Single entry point with WAF protection
 
 ---
 
-## Software Components
+## **9. Error Handling & Observability**
 
-### 2.3 Software Components
+### **Error Tracking**
+- **Application Monitoring**: Prometheus and Grafana for metrics
+- **Log Aggregation**: Centralized logging across all services
+- **Alert Management**: Automated notifications via email and Slack
 
-**Frontend**: Modern web applications and mobile apps.
+### **Logging**
+- **Structured Logging**: JSON format with log levels
+- **Audit Trails**: Complete logging for compliance and debugging
+- **Performance Monitoring**: API latency and server health tracking
 
-**Backend**: Microservices-based architecture with Azure Kubernetes Services.
-
-**Messaging**: RabbitMQ for event-driven communication.
-
-**Notification Layer**: Real-time messaging and push notifications.
-
-**Databases**: MongoDB Cluster with multi-tenant isolation and Redis caching.
-
-**Storage**: Azure Blob Storage with public/private buckets for data and media content storage.
-
-**Monitoring & Logging**: Prometheus, Grafana, and Wazuh for comprehensive monitoring.
-
----
-
-## CI/CD Flow
-
-### 2.4 CI/CD Flow
-
-**Development Process**:
-- Developers push code to GitHub version control system
-- GitHub Actions automatically trigger the CI/CD pipeline
-
-**Build & Test Phase**:
-- Automated build process compiles and packages the application
-- Comprehensive testing including unit tests, integration tests, and quality checks
-- SonarQube performs static code analysis for quality assurance
-
-**Containerization & Deployment**:
-- Docker images are created and pushed to Azure Container Registry
-- Azure Kubernetes Service pulls the latest images and deploys to production
-- Automated rollback mechanisms ensure service stability
-
-**Monitoring & Maintenance**:
-- Continuous monitoring of deployed applications
-- Performance tracking and health checks
-- Automated maintenance and updates
+### **Metrics**
+- **System Metrics**: CPU, memory, disk usage via Node Exporter
+- **Application Metrics**: Response times, error rates, throughput
+- **Business Metrics**: User activity, feature usage, performance KPIs
 
 ---
 
-## Communication Between Microservices
+## **10. Non-Functional Requirements**
 
-### 2.5 Communication Between Microservices
+### **Performance**
+- **Response Time**: < 200ms for API endpoints
+- **Throughput**: Support for 10,000+ concurrent users
+- **Availability**: 99.9% uptime SLA
 
-**Direct API Calls**: For real-time, synchronous operations.
+### **Availability**
+- **High Availability**: Multi-zone deployment with automated failover
+- **Disaster Recovery**: Automated backup and recovery procedures
+- **Monitoring**: 24/7 system monitoring with automated alerts
 
-**RabbitMQ Event Bus**: For asynchronous tasks like report processing or background workflows.
+### **Maintainability**
+- **Code Quality**: SonarQube integration with automated quality gates
+- **Documentation**: API documentation and setup guides
+- **Testing**: 15% minimum unit test coverage with integration testing
 
-**Hybrid Approach**: Combines direct APIs and events for flexible, reliable communication.
-
----
-
-## Security & Observability
-
-### 2.6 Security & Observability
-
-**Security Layers**:
-- **Azure Web Application Firewall (WAF)**: Advanced threat protection and security
-- **TLS Encryption**: End-to-end encryption for all communications
-- **Authentication**: Secure token-based authentication for stateless sessions
-- **Single Sign-On**: Integration with enterprise identity providers
-- **Access Control**: Role-Based Access Control (RBAC) at all levels
-
-**Monitoring & Compliance**:
-- **Prometheus & Grafana**: Comprehensive metrics collection and visualization
-- **Wazuh Security & Compliance**: Advanced security monitoring and threat detection
-- **Centralized Logging**: Comprehensive log aggregation and analysis
-- **Real-time Monitoring**: Continuous system health and performance tracking
-- **Automated Audits**: Regular security assessments and compliance checks
-- **GDPR Compliance**: Full compliance with General Data Protection Regulation requirements
+### **Extensibility**
+- **Modular Architecture**: L0-L3 service layers for easy extension
+- **Plugin System**: Framework support for custom business logic
+- **API Versioning**: Backward-compatible API evolution
 
 ---
 
-## Scalability & Performance
+## **11. Assumptions & Constraints**
 
-### 2.7 Scalability & Performance
+### **Technical Constraints**
+- **Cloud Platform**: Microsoft Azure infrastructure
+- **Database**: MongoDB as primary NoSQL database
+- **Containerization**: Docker and Kubernetes requirements
+- **Security**: Enterprise-grade security and compliance requirements
 
-**Horizontal Scaling**: Auto-scaling of services based on load.
+### **Business Constraints**
+- **Multi-tenancy**: Complete data isolation between tenants
+- **Compliance**: GDPR and industry-specific regulatory requirements
+- **Scalability**: Support for growing user base and data volume
 
-**Caching**: Multi-level caching reduces database reads and improves response time.
-
-**Message Queues**: Prevent bottlenecks by queuing background tasks.
-
----
-
-## Security Architecture
-
-### Multi-Layer Security
-
-#### Network Security:
-Network Security Groups (NSG) control traffic flow between services, ensuring secure communication and preventing unauthorized access.
-
-#### Identity & Access Management:
-Enterprise identity management with role-based access control for developers, operators, and administrators.
-
-#### Secrets Management:
-Azure Key Vaults provide centralized secrets management for secure storage and access to sensitive information.
-
-### Data Security
-
-#### Encryption:
-- **At Rest**: AES-256 encryption for all data stores
-- **In Transit**: TLS 1.3 for all communications
-- **Application Level**: Field-level encryption for sensitive data
-
-#### Data Classification:
-Data is classified into public, internal, confidential, and restricted categories based on sensitivity and business requirements.
-
-#### Compliance:
-- **GDPR**: Data protection and privacy
-- **SOC 2**: Security controls and monitoring
-- **PCI DSS**: Payment card security
-- **HIPAA**: Healthcare data protection
+### **Network Constraints**
+- **VPN Access**: Secure internal network access
+- **Firewall Rules**: Network Security Groups and WAF protection
+- **Bandwidth**: Optimized for global user access
 
 ---
 
-## Notification & Event Flow
+## **12. Future Improvements**
 
-### 3.1 Event Workflow
+### **Planned Features**
+- **AI/ML Integration**: Machine learning capabilities for business intelligence
+- **Advanced Analytics**: Enhanced reporting and data visualization
+- **Mobile Applications**: Native mobile apps for iOS and Android
+- **API Marketplace**: Third-party developer ecosystem
 
-User performs an action (e.g., submits a request).
+### **Technology Upgrades**
+- **Microservices Evolution**: Enhanced service mesh implementation
+- **Database Optimization**: Advanced MongoDB clustering and sharding
+- **Security Enhancements**: Zero-trust security model implementation
+- **Performance Optimization**: Advanced caching and CDN strategies
 
-Web Service updates the database and publishes an event to the message queue.
 
-Background Service or other microservices consume this event asynchronously.
-
-Results are processed, and responses are sent back to the client (if needed).
-
-### 3.2 Notification Workflow
-
-Notification Service listens to RabbitMQ for events like "Task Completed."
-
-For active users, updates are pushed through real-time communication.
-
-For offline/mobile users, push notifications are sent.
-
----
-
-## Architecture Highlights
-
-### 4.1 Key Features
-
-**Multi-Layer Security**: Azure WAF, TLS encryption, and Wazuh security monitoring.
-
-**Comprehensive Service Architecture**: Microservices with Azure Kubernetes Services and multi-tenant database isolation.
-
-**Event-Driven Communication**: Asynchronous messaging through RabbitMQ for scalable workflows.
-
-**Real-Time Capabilities**: Instant updates and notifications for users.
-
-**Cloud-Native Deployment**: Containerized services with Azure Kubernetes orchestration.
-
-**Automated CI/CD Pipeline**: GitHub Actions, SonarQube quality checks, and automated deployments.
-
-**Multi-Environment Support**: Development, Staging, and Production environments with GitHub branching strategy.
 
