@@ -16,7 +16,7 @@ This document outlines the enterprise-grade cloud-native microservices platform 
 - Event-driven communication via RabbitMQ Service Bus
 - Real-time notifications and messaging
 - Payment processing integration
-- AI/ML integration for business intelligence
+- AI/ML integration with RAG and translation capabilities
 - Advanced analytics and data visualization
 - Mobile applications for iOS and Android
 - Automated CI/CD pipelines with security gates
@@ -122,7 +122,7 @@ This document outlines the enterprise-grade cloud-native microservices platform 
 - **Email Services**: SMTP integration for notifications
 - **Campaign Management**: HubSpot integration
 - **Push Notifications**: Firebase Cloud Messaging (FCM)
-- **AI/ML Services**: Machine learning capabilities for business intelligence
+- **AI/ML Services**: RAG (Retrieval-Augmented Generation) and translation capabilities
 - **Analytics Services**: Advanced reporting and data visualization
 - **API Marketplace**: Third-party developer ecosystem integration
 
