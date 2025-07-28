@@ -1,5 +1,4 @@
 # System Architecture Guideline
-
 ### Table of Contents
 1. [What is System Architecture?](#what-is-system-architecture)
 2. [Key Components of the Architecture](#key-components-of-the-architecture)
@@ -26,6 +25,7 @@ System architecture is a blueprint that defines the structure, interaction, and 
 **Separation of Responsibilities**:
 - **Web Services (API Layer)**: Handle synchronous client requests
 - **Host Services (Worker Layer)**: Process background tasks, heavy reports, and schedulers
+- **Multi-Tenant Architecture**: Isolated tenant data with dedicated database routing
 
 **Event-Driven Architecture**: RabbitMQ ensures asynchronous communication between services.
 
@@ -51,7 +51,7 @@ System architecture is a blueprint that defines the structure, interaction, and 
 - **Virtual Networks (VNET)**: Network segmentation and security
 
 **Data Stores**:
-- **MongoDB Cluster**: Primary NoSQL database with encrypted data storage
+- **MongoDB Cluster**: Primary NoSQL database with encrypted data storage and multi-tenant isolation
 - **Redis**: High-speed volatile in-memory caching
 - **Azure Blob Storage**: Encrypted storage for data and media content with public/private buckets
 - **Container Hard Drives**: Encrypted persistent storage
@@ -82,6 +82,25 @@ System architecture is a blueprint that defines the structure, interaction, and 
 **Use Cases**:
 - **Public Content**: Website images, banners, and static assets accessible via direct URLs
 - **Private Content**: Client-uploaded media requiring secure access through pre-signed URLs
+
+### Multi-Tenant Architecture
+
+**Tenant Isolation Strategy**:
+- **Dedicated Database Routing**: Each tenant has isolated database access through Tenant Service
+- **Microservices Entry Point**: Centralized microservice handles tenant-specific requests
+- **Data Segregation**: Complete data isolation between tenants for security and compliance
+
+**Architecture Flow**:
+- **Tenant Requests**: Multiple tenants access shared microservices infrastructure
+- **Service Routing**: Microservices route requests to Tenant Service for database selection
+- **Database Isolation**: Tenant Service directs requests to tenant-specific MongoDB instances
+- **Data Security**: Complete isolation ensures no cross-tenant data access
+
+**Benefits**:
+- **Security**: Complete data isolation between tenants
+- **Scalability**: Independent scaling of tenant databases
+- **Compliance**: Meets regulatory requirements for data segregation
+- **Performance**: Optimized database access for each tenant
 
 ### High-Level Architecture Diagram
 
@@ -141,7 +160,7 @@ Production Deployment → Monitoring & Maintenance
 - **Microservices**: Distributed application components
 
 **Supporting Services Layer**
-- **MongoDB Cluster**: Primary database with encrypted data storage
+- **MongoDB Cluster**: Primary database with encrypted data storage and multi-tenant isolation
 - **RabbitMQ**: Asynchronous messaging and event-driven communication
 - **Redis**: High-speed volatile in-memory caching
 - **Azure Blob Storage**: Encrypted storage for data and media content with public/private buckets
@@ -168,7 +187,7 @@ Production Deployment → Monitoring & Maintenance
 
 **Notification Layer**: Real-time messaging and push notifications.
 
-**Databases**: MongoDB Cluster with Redis caching.
+**Databases**: MongoDB Cluster with multi-tenant isolation and Redis caching.
 
 **Storage**: Azure Blob Storage with public/private buckets for data and media content storage.
 
@@ -305,7 +324,7 @@ For offline/mobile users, push notifications are sent.
 
 **Multi-Layer Security**: Azure WAF, TLS encryption, and Wazuh security monitoring.
 
-**Comprehensive Service Architecture**: Microservices with Azure Kubernetes Services.
+**Comprehensive Service Architecture**: Microservices with Azure Kubernetes Services and multi-tenant database isolation.
 
 **Event-Driven Communication**: Asynchronous messaging through RabbitMQ for scalable workflows.
 
