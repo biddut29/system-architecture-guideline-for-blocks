@@ -1,18 +1,24 @@
 # System Architecture
 
+## **Summary**
+
+This document outlines the enterprise-grade cloud-native microservices platform architecture designed for multi-tenant SaaS applications. The system leverages Microsoft Azure infrastructure with Kubernetes orchestration, MongoDB for data persistence, and RabbitMQ for event-driven communication. The architecture ensures scalability, security, compliance, and maintainability while supporting real-time operations and automated CI/CD pipelines.
+
+---
+
 ## **1. Overview**
 
 **Purpose**: Enterprise-grade cloud-native microservices platform with multi-tenant architecture, secure data management, and scalable infrastructure.
-
-
 
 **Key Features**:
 - Multi-tenant architecture with complete data isolation
 - Microservices-based architecture (L0-L3 layered services)
 - Event-driven communication via RabbitMQ Service Bus
 - Real-time notifications and messaging
-- Payment processing integration 
-- Monitoring and observability
+- Payment processing integration
+- AI/ML integration for business intelligence
+- Advanced analytics and data visualization
+- Mobile applications for iOS and Android
 - Automated CI/CD pipelines with security gates
 
 **High-level Goals**: Scalability, security, maintainability, compliance, performance, and developer productivity.
@@ -57,42 +63,31 @@
 ## **3. Components Description**
 
 ### **Frontend Components**
-- **Name**: Web Applications and Mobile Apps
-- **Responsibilities**: User interface, client-side logic, updates
-- **Technology Stack**: Angular/React, SignalR for communication
-- **Interactions**: REST APIs, WebSocket connections, GraphQL queries
+- **Web Applications and Mobile Apps**: User interface, client-side logic, and updates with REST APIs, WebSocket connections, and GraphQL queries
+- **Technology**: Angular/React with SignalR for real-time communication
+- **Mobile Applications**: Native iOS and Android apps with cross-platform capabilities
 
 ### **Backend Microservices**
-- **Name**: SELISE Microservices (L0-L3 Architecture)
-- **Responsibilities**: Business logic, data processing, service orchestration
-- **Technology Stack**: .NET Core, SELISE Framework with RBAC, CQRS, MediatR
-- **Interactions**: Internal APIs, message queues, database operations
+- **SELISE Microservices (L0-L3)**: Business logic, data processing, and service orchestration with internal APIs, message queues, and database operations
+- **Technology**: .NET Core with Blocks Framework (RBAC, CQRS, MediatR)
 
 **Microservices Architecture**: L0 (Core Framework), L1 (Generic Services), L2-L3 (Business & Enterprise Services)
 
 ### **Database Layer**
-- **Name**: MongoDB Cluster
-- **Responsibilities**: Primary data storage with multi-tenant isolation
-- **Technology Stack**: MongoDB NoSQL database
-- **Interactions**: Direct access from microservices, GraphQL interface
+- **MongoDB**: Primary data storage with multi-tenant isolation, direct access from microservices and GraphQL interface
+- **Technology**: NoSQL database with distributed architecture
 
 ### **Caching Layer**
-- **Name**: Redis Cache
-- **Responsibilities**: High-speed in-memory caching, session management
-- **Technology Stack**: Redis
-- **Interactions**: Cache frequently accessed data, improve response times
+- **Redis**: High-speed in-memory caching and session management for improved response times
+- **Technology**: In-memory data structure store
 
 ### **Message Queue**
-- **Name**: RabbitMQ Service Bus
-- **Responsibilities**: Asynchronous messaging, event-driven communication
-- **Technology Stack**: RabbitMQ
-- **Interactions**: Cross-service communication, background task processing
+- **RabbitMQ Service Bus**: Asynchronous messaging and event-driven communication for cross-service communication and background task processing
+- **Technology**: Message broker with queue management
 
 ### **Storage Service**
-- **Name**: Azure Blob Storage
-- **Responsibilities**: File storage, media content, backup data
-- **Technology Stack**: Azure Blob Storage
-- **Interactions**: File upload/download, pre-signed URL generation
+- **Azure Blob Storage**: File storage, media content, and backup data with upload/download capabilities and pre-signed URL generation
+- **Technology**: Cloud object storage service
 
 ---
 
@@ -123,10 +118,13 @@
 ## **5. Integration & Interfaces**
 
 ### **External APIs/Services**
-- **Payment Gateways**: SIX, Stripe integration
+- **Payment Gateways**: Stripe and others
 - **Email Services**: SMTP integration for notifications
 - **Campaign Management**: HubSpot integration
 - **Push Notifications**: Firebase Cloud Messaging (FCM)
+- **AI/ML Services**: Machine learning capabilities for business intelligence
+- **Analytics Services**: Advanced reporting and data visualization
+- **API Marketplace**: Third-party developer ecosystem integration
 
 ### **Internal APIs**
 - **REST APIs**: Standard HTTP endpoints for synchronous operations
@@ -180,11 +178,16 @@
 - **CDN Integration**: Content delivery network for static assets
 - **Database Query Optimization**: Indexed queries and connection pooling
 
-### **Monitoring & Logging**
-- **Metrics Collection**: Prometheus for data collection
-- **Visualization**: Grafana for dashboards
-- **Security Monitoring**: Wazuh for threat detection and compliance
-- **Centralized Logging**: ELK stack or Azure Monitor for log aggregation
+### **Performance Metrics**
+- **Response Time**: < 200ms for API endpoints
+- **Throughput**: Support for 10,000+ concurrent users
+- **Availability**: 99.9% uptime SLA
+
+### **Advanced Features**
+- **Service Mesh**: Enhanced microservices communication and routing
+- **Database Optimization**: Advanced MongoDB clustering and sharding
+- **Zero-trust Security**: Enhanced security model implementation
+- **Advanced Caching**: Multi-tier caching and CDN strategies
 
 ---
 
@@ -215,19 +218,23 @@ Production Deployment → Monitoring & Maintenance
 
 ---
 
-## **9. Error Handling & Observability**
+## **9. Monitoring & Observability**
 
-### **Error Tracking**
+### **Application Monitoring**
+- **Metrics Collection**: Prometheus for data collection
+- **Visualization**: Grafana for dashboards
+- **Security Monitoring**: Wazuh for threat detection and compliance
+- **Centralized Logging**: ELK stack or Azure Monitor for log aggregation
+
+### **Error Tracking & Alerting**
 - **Application Monitoring**: Prometheus and Grafana for metrics
 - **Log Aggregation**: Centralized logging across all services
-- **Alert Management**: Automated notifications via email and Slack
+- **Alert Management**: Automated notifications via email
 
-### **Logging**
+### **Logging & Metrics**
 - **Structured Logging**: JSON format with log levels
 - **Audit Trails**: Complete logging for compliance and debugging
 - **Performance Monitoring**: API latency and server health tracking
-
-### **Metrics**
 - **System Metrics**: CPU, memory, disk usage via Node Exporter
 - **Application Metrics**: Response times, error rates, throughput
 - **Business Metrics**: User activity, feature usage, performance KPIs
@@ -235,11 +242,6 @@ Production Deployment → Monitoring & Maintenance
 ---
 
 ## **10. Non-Functional Requirements**
-
-### **Performance**
-- **Response Time**: < 200ms for API endpoints
-- **Throughput**: Support for 10,000+ concurrent users
-- **Availability**: 99.9% uptime SLA
 
 ### **Availability**
 - **High Availability**: Multi-zone deployment with automated failover
@@ -268,7 +270,7 @@ Production Deployment → Monitoring & Maintenance
 
 ### **Business Constraints**
 - **Multi-tenancy**: Complete data isolation between tenants
-- **Compliance**: GDPR and industry-specific regulatory requirements
+- **Compliance**: Industry-specific regulatory requirements
 - **Scalability**: Support for growing user base and data volume
 
 ### **Network Constraints**
@@ -276,21 +278,7 @@ Production Deployment → Monitoring & Maintenance
 - **Firewall Rules**: Network Security Groups and WAF protection
 - **Bandwidth**: Optimized for global user access
 
----
 
-## **12. Future Improvements**
-
-### **Planned Features**
-- **AI/ML Integration**: Machine learning capabilities for business intelligence
-- **Advanced Analytics**: Enhanced reporting and data visualization
-- **Mobile Applications**: Native mobile apps for iOS and Android
-- **API Marketplace**: Third-party developer ecosystem
-
-### **Technology Upgrades**
-- **Microservices Evolution**: Enhanced service mesh implementation
-- **Database Optimization**: Advanced MongoDB clustering and sharding
-- **Security Enhancements**: Zero-trust security model implementation
-- **Performance Optimization**: Advanced caching and CDN strategies
 
 
 
